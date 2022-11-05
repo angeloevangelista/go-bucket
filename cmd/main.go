@@ -9,6 +9,12 @@ import (
 	util "github.com/angeloevangelista/go-bucket/internal/utils"
 )
 
+func panicIfError(err error) {
+	if util.CheckError(err) {
+		panic(err)
+	}
+}
+
 func main() {
 	log.Print("🚀 It works!")
 
@@ -16,17 +22,13 @@ func main() {
 		"BITBUCKET_LEGACY_CLIENT_ID",
 	)
 
-	if util.CheckError(err) {
-		panic(err)
-	}
+	panicIfError(err)
 
 	clientSecret, err := secrets_storage_service.GetSecret(
 		"BITBUCKET_LEGACY_CLIENT_SECRET",
 	)
 
-	if util.CheckError(err) {
-		panic(err)
-	}
+	panicIfError(err)
 
 	bitbucketClient, err := bitbucket.GetClient(
 		bitbucket_models.GetBitbucketClientOptions{
@@ -35,9 +37,7 @@ func main() {
 		},
 	)
 
-	if util.CheckError(err) {
-		panic(err)
-	}
+	panicIfError(err)
 
 	workspacesResponse, err := bitbucketClient.WorkspacesHandler().ListForCurrentUser(
 		bitbucket_models.PaginationOptions{
@@ -46,11 +46,26 @@ func main() {
 		},
 	)
 
-	if util.CheckError(err) {
-		panic(err)
-	}
+	panicIfError(err)
 
-	for i, workspace := range workspacesResponse.Values {
-		log.Printf("Workspace %d: %s", i, workspace.Name)
+	for _, workspace := range workspacesResponse.Values {
+		log.Printf("Workspace: %s", workspace.Slug)
+
+		repositoriesResponse, err := bitbucketClient.RepositoriesHandler().ListByWorkspace(
+			workspace.Slug,
+			bitbucket_models.PaginationOptions{
+				PageLimit:  10,
+				PageNumber: 1,
+			},
+		)
+
+		panicIfError(err)
+
+		for _, repository := range repositoriesResponse.Values {
+			log.Printf("Repository: %s", repository.Name)
+		}
+
+		log.Printf("-----")
+		log.Printf("")
 	}
 }
