@@ -1,11 +1,11 @@
-package bitbucket
+package bitbucket_models
 
 type GetAccessTokenOptions struct {
 	ClientId     string
 	ClientSecret string
 }
 
-type BitbucketAccessTokenResponse struct {
+type AccessTokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	Scopes       string `json:"scopes"`
 	TokenType    string `json:"token_type"`
