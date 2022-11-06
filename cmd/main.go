@@ -79,6 +79,20 @@ func main() {
 			log.Printf("Project: %s", project.Name)
 		}
 
+		usersResponse, err := bitbucketClient.UsersHandler().ListByWorkspace(
+			workspace.Slug,
+			bitbucket_models.PaginationOptions{
+				PageLimit:  100,
+				PageNumber: 1,
+			},
+		)
+
+		panicIfError(err)
+
+		for _, user := range usersResponse.Values {
+			log.Printf("User: %s", user.User.Nickname)
+		}
+
 		log.Printf("-----")
 		log.Printf("")
 	}
