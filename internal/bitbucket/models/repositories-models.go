@@ -41,10 +41,6 @@ type RepositoryResponseLinks struct {
 	Hooks        Avatar  `json:"hooks"`
 }
 
-type Avatar struct {
-	Href string `json:"href"`
-}
-
 type Clone struct {
 	Name string `json:"name"`
 	Href string `json:"href"`
@@ -58,15 +54,6 @@ type Mainbranch struct {
 type OverrideSettings struct {
 	DefaultMergeStrategy bool `json:"default_merge_strategy"`
 	BranchingModel       bool `json:"branching_model"`
-}
-
-type Owner struct {
-	DisplayName string     `json:"display_name"`
-	Links       OwnerLinks `json:"links"`
-	Type        string     `json:"type"`
-	UUID        string     `json:"uuid"`
-	AccountID   string     `json:"account_id"`
-	Nickname    string     `json:"nickname"`
 }
 
 type OwnerLinks struct {

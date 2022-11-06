@@ -41,7 +41,7 @@ func main() {
 
 	workspacesResponse, err := bitbucketClient.WorkspacesHandler().ListForCurrentUser(
 		bitbucket_models.PaginationOptions{
-			PageLimit:  10,
+			PageLimit:  100,
 			PageNumber: 1,
 		},
 	)
@@ -54,7 +54,7 @@ func main() {
 		repositoriesResponse, err := bitbucketClient.RepositoriesHandler().ListByWorkspace(
 			workspace.Slug,
 			bitbucket_models.PaginationOptions{
-				PageLimit:  10,
+				PageLimit:  100,
 				PageNumber: 1,
 			},
 		)
@@ -63,6 +63,20 @@ func main() {
 
 		for _, repository := range repositoriesResponse.Values {
 			log.Printf("Repository: %s", repository.Name)
+		}
+
+		projectsResponse, err := bitbucketClient.ProjectsHandler().ListByWorkspace(
+			workspace.Slug,
+			bitbucket_models.PaginationOptions{
+				PageLimit:  100,
+				PageNumber: 1,
+			},
+		)
+
+		panicIfError(err)
+
+		for _, project := range projectsResponse.Values {
+			log.Printf("Project: %s", project.Name)
 		}
 
 		log.Printf("-----")
