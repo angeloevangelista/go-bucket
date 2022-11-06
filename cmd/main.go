@@ -62,7 +62,22 @@ func main() {
 		panicIfError(err)
 
 		for _, repository := range repositoriesResponse.Values {
-			log.Printf("Repository: %s", repository.Name)
+			log.Printf("Repository: %s", repository.Slug)
+
+			commitsResponse, err := bitbucketClient.CommitsHandler().ListByRepository(
+				workspace.Slug,
+				repository.Slug,
+				bitbucket_models.PaginationOptions{
+					PageLimit:  100,
+					PageNumber: 1,
+				},
+			)
+
+			panicIfError(err)
+
+			for _, commit := range commitsResponse.Values {
+				log.Printf("Commit: %s", commit.Message)
+			}
 		}
 
 		projectsResponse, err := bitbucketClient.ProjectsHandler().ListByWorkspace(
