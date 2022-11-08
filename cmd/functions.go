@@ -89,3 +89,31 @@ func listCommits(
 
 	return commits
 }
+
+func listPipelines(
+	bitbucketClient *bitbucket.BitbucketClient,
+	workspaceSlug string,
+	repositorySlug string,
+) []bitbucket_models.PipelineResponse {
+	var pipelines []bitbucket_models.PipelineResponse
+
+	hasMorePages := true
+
+	for hasMorePages {
+		pipelinesResponse, err := bitbucketClient.PipelinesHandler().ListByRepository(
+			workspaceSlug,
+			repositorySlug,
+			bitbucket_models.PaginationOptions{
+				PageLimit:  100,
+				PageNumber: 1,
+			},
+		)
+
+		panicIfError(err)
+
+		hasMorePages = pipelinesResponse.Next != ""
+		pipelines = append(pipelines, pipelinesResponse.Values...)
+	}
+
+	return pipelines
+}
